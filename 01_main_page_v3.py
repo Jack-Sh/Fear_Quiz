@@ -10,13 +10,6 @@ class MainPage:
         button_font = ("Arial", "10", "bold")
         button_fg = "#FFFFFF"
         
-        # Initialise variables (such as the feedback variable)
-        self.var_feedback = StringVar()
-        self.var_feedback.set("")
-
-        self.var_has_error = StringVar()
-        self.var_has_error.set("no")
-
         # Set up GUI Frame
         self.main_frame = Frame(padx=10, pady=10)
         self.main_frame.grid()
@@ -50,10 +43,7 @@ class MainPage:
 
         self.go_button.grid(row=0, column=1)
 
-        error = "Please enter a whole number between 1 and 50"
-
-        self.output_label = Label(self.main_frame, text=error,
-                                fg="#9C0000")
+        self.output_label = Label(self.main_frame, text="")
         self.output_label.grid(row=3)
 
     # checks user input and if it's valid, converts temp
@@ -61,6 +51,7 @@ class MainPage:
 
         has_error = "no"
         error = "Please enter a whole number between 1 and 50"
+        continues = "Valid response"
 
         response = self.main_entry.get()
 
@@ -79,18 +70,16 @@ class MainPage:
         # sets var_has_error so that entry box and
         # labels can be correctly formatted by formatting function
         if has_error == "yes":
-            self.var_has_error.set("yes")
-            self.var_feedback.set(error)
-            print("error")
-            return "invalid"
+            self.output_label.config(text=error, fg="#9C0000")
+            self.main_entry.config(bg="#F8CECC")
         
         # if we have no errors
         else:
-            # set to 'no' in case of previous errors
-            self.var_has_error.set("no")
-            print("good")
+            # *** remove once quiz component is done ****
+            self.output_label.config(text=continues, fg="#004C00")
+            self.main_entry.config(bg="#D5E8D4")
 
-            # return number to be 
+            # return number to be used for quiz
             return response
 
 # main routine
