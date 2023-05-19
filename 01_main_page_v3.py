@@ -67,15 +67,14 @@ class MainPage:
         except ValueError:
             has_error = "yes"
 
-        # sets var_has_error so that entry box and
-        # labels can be correctly formatted by formatting function
+        # prints error message if its an invalid input
         if has_error == "yes":
             self.output_label.config(text=error, fg="#9C0000")
             self.main_entry.config(bg="#F8CECC")
         
         # if we have no errors
         else:
-            # *** remove once quiz component is done ****
+            # *** remove once quiz component is done ***
             self.output_label.config(text=continues, fg="#004C00")
             self.main_entry.config(bg="#D5E8D4")
 
