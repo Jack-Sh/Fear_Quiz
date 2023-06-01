@@ -14,7 +14,6 @@ class Quiz:
         self.text_frame = Frame(padx=10, pady=10)
         self.text_frame.grid()
 
-        # Add 'Fear Quiz' heading to frame
         self.question_label = Label(self.text_frame,
                                   text="Question 1/1",
                                   font=("Arial", "18", "bold"))
@@ -27,7 +26,6 @@ class Quiz:
 
         self.fear_label.grid(row=1, column=0, padx=10)
 
-        # Add entry form to frame and an error message beneath it
         self.quiz_frame = Frame(self.text_frame)
         self.quiz_frame.grid(row=1, column=1, pady=20)
 

@@ -28,7 +28,7 @@ class MainPage:
     
         self.main_subheading.grid(row=1)
 
-        # Add entry form to frame and an error message beneath it
+        # Add entry form to frame and a go button next to it
         self.question_frame = Frame(self.main_frame)
         self.question_frame.grid(row=2)
 
@@ -43,16 +43,19 @@ class MainPage:
 
         self.go_button.grid(row=0, column=1)
 
+        # Add the output label (error message) below the entry form
         self.output_label = Label(self.main_frame, text="")
         self.output_label.grid(row=3)
 
-    # checks user input and if it's valid, converts temp
+    # checks user input and if it's valid
     def check_questions(self):
-
+        
+        # setup variables for future flexability
         has_error = "no"
         error = "Please enter a whole number between 1 and 50"
         continues = "Valid response"
 
+        # get response and check that it is between max and min
         response = self.main_entry.get()
 
         try:
