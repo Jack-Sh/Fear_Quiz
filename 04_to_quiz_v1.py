@@ -1,4 +1,5 @@
 from tkinter import *
+from functools import partial
 
 
 class MainPage:
@@ -77,10 +78,8 @@ class MainPage:
         
         # if we have no errors
         else:
-            self.to_quiz
+            self.to_quiz(response)
 
-            # return number to be used for quiz
-            return response
 
     def to_quiz(self, num_questions):
         Quiz(num_questions)
@@ -90,16 +89,20 @@ class MainPage:
 
 class Quiz:
 
-    def __init__(self, num_questions):
+    def __init__(self, how_many):
+
+        self.quiz_box = Toplevel()
+
+        self.quiz_box.protocol('WM_DELETE_WINDOW', partial(self.close_quiz))
         
         # common format for all buttons
         button_font = ("Arial", "10", "bold")
         
         # Set up text frame
-        self.text_frame = Frame(padx=10, pady=10)
+        self.text_frame = Frame(self.quiz_box, padx=10, pady=10)
         self.text_frame.grid()
 
-        question_heading = "Question 1 of {}".format(num_questions)
+        question_heading = "Question 1 of {}".format(how_many)
 
         # Add question no# to frame
         self.question_label = Label(self.text_frame,
@@ -139,9 +142,15 @@ class Quiz:
 
         self.next_button.grid(row=3, column=1)
 
+
+    def close_quiz(self):
+
+        root.deiconify()
+        self.quiz_box.destroy()
+
 # main routine
 if __name__ == "__main__":
     root = Tk()
     root.title("Fear Quiz")
-    Quiz()
+    MainPage()
     root.mainloop()
