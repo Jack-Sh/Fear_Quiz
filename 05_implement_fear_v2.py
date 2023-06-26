@@ -10,6 +10,7 @@ class Quiz:
         # common format for all buttons
         button_font = ("Arial", "10", "bold")
 
+        # get all fears
         file = open("fear_list.csv", "r")
         all_fears = list(csv.reader(file, delimiter=","))
         file.close()
@@ -17,7 +18,12 @@ class Quiz:
         # removes first entry in list (ie: the header row).
         all_fears.pop(0)
 
-        chosen_fear = random.choice(all_fears)
+        self.all_fear_list = []
+
+        for item in range(0, 4):
+            chosen_fears = random.choice(all_fears)
+
+            self.all_fear_list.append(chosen_fears)
 
         # Set up text frame
         self.text_frame = Frame(padx=10, pady=10)
@@ -33,7 +39,7 @@ class Quiz:
 
         # Add fear placeholder to text frame
         self.fear_label = Label(self.text_frame,
-                                text=chosen_fear[0],
+                                text=self.all_fear_list[0][0],
                                 font=("Arial", "18", "bold"),
                                 anchor=N)
 
@@ -43,13 +49,22 @@ class Quiz:
         self.quiz_frame = Frame(self.text_frame)
         self.quiz_frame.grid(row=1, column=1)
 
+        self.choice_buttons_ref = []
+
         # create 4 buttons (choice buttons)
         for item in range(0, 4):
-            self.choice_buttons = Button(self.quiz_frame, text="Button",
-                            bg="#80c5ff", font=button_font, width=12, height=2)
+            self.choice_buttons = Button(self.quiz_frame, bg="#80c5ff", font=button_font, width=12, height=2)
+
+            self.choice_buttons_ref.append(self.choice_buttons)
 
             self.choice_buttons.grid(row=item // 2, column=item % 2, pady=15, padx=15)
         
+        count = 0
+        for item in self.choice_buttons_ref:
+            item['text'] = self.all_fear_list[count][1]
+
+            count += 1
+
         # adds a blank row to place 'next button' at bottom of window
         self.blank = Label(self.quiz_frame, text="")
 
@@ -57,7 +72,7 @@ class Quiz:
 
         # add next button (for testing purposes this is hard coded)
         self.next_button = Button(self.quiz_frame, text="Next Question",
-                            bg="#D5E8D4", font=button_font, width=12)
+                            bg="#D5E8D4", font=button_font,  width=12)
 
         self.next_button.grid(row=3, column=1)
 
