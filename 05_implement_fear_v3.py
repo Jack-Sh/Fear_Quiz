@@ -82,7 +82,7 @@ class Quiz:
                             bg="#D5E8D4", font=button_font,  width=12)
 
         self.next_button.grid(row=3, column=1)
-
+        
 
 # main routine
 if __name__ == "__main__":

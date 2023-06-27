@@ -1,5 +1,7 @@
 from tkinter import *
 from functools import partial
+import csv
+import random
 
 
 class MainPage:
@@ -99,6 +101,7 @@ class Quiz:
         self.rounds_played = IntVar()
         self.rounds_played.set(0)
 
+        self.question_fear_list = []
 
         self.quiz_box = Toplevel()
 
@@ -123,7 +126,7 @@ class Quiz:
 
         # Add fear placeholder to text frame
         self.fear_label = Label(self.text_frame,
-                                text="Fear Goes Here...",
+                                text="",
                                 font=("Arial", "18", "bold"),
                                 anchor=N)
 
@@ -133,10 +136,13 @@ class Quiz:
         self.quiz_frame = Frame(self.text_frame)
         self.quiz_frame.grid(row=1, column=1)
 
+        self.choice_buttons_ref = []
+
         # create 4 buttons (choice buttons)
         for item in range(0, 4):
-            self.choice_buttons = Button(self.quiz_frame, text="Button",
-                            bg="#80c5ff", font=button_font, width=12, height=2)
+            self.choice_buttons = Button(self.quiz_frame, bg="#80c5ff", font=button_font, width=12, height=2)
+
+            self.choice_buttons_ref.append(self.choice_buttons)
 
             self.choice_buttons.grid(row=item // 2, column=item % 2, pady=15, padx=15)
         
@@ -151,6 +157,32 @@ class Quiz:
 
         self.next_button.grid(row=3, column=1)
 
+        self.new_question()
+
+    def get_fears(self):
+
+        # get all fears
+        file = open("fear_list.csv", "r")
+        all_fears = list(csv.reader(file, delimiter=","))
+        file.close()
+
+        # removes first entry in list (ie: the header row).
+        all_fears.pop(0)
+
+        self.question_fear_list = []
+
+        while len(self.question_fear_list) < 3:
+
+            wrong_fears = random.choice(all_fears)
+
+            self.question_fear_list.append(wrong_fears)
+
+        correct_fear = random.choice(all_fears)
+
+        self.question_fear_list.append(correct_fear)
+
+        return self.question_fear_list
+
 
     def new_question(self):
 
@@ -160,13 +192,23 @@ class Quiz:
         current_round += 1
         self.rounds_played.set(current_round)
 
-        if current_round < how_many:
-            new_heading = "Question {} of {}".format(current_round + 1, how_many)
-            self.question_label.config(text=new_heading)
+        new_heading = "Question {} of {}".format(current_round, how_many)
+        self.question_label.config(text=new_heading)
         
-        else:
+        if current_round == how_many:
             self.next_button.config(state=DISABLED)
 
+        button_fear_list = self.get_fears()
+
+        self.fear_label.config(text=button_fear_list[0][0])
+
+        random.shuffle(button_fear_list)
+
+        count = 0
+        for item in self.choice_buttons_ref:
+            item['text'] = button_fear_list[count][1]
+
+            count += 1
 
     def close_quiz(self):
 
