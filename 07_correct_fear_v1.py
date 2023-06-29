@@ -3,95 +3,11 @@ from functools import partial
 import csv
 import random
 
-
-class MainPage:
-
-    def __init__(self):
-        
-        
-        # common format for all buttons
-        # Arial size 14 bold, with white text
-        button_font = ("Arial", "10", "bold")
-        
-        # Set up GUI Frame
-        self.main_frame = Frame(padx=10, pady=10)
-        self.main_frame.grid()
-
-        # Add 'Fear Quiz' heading to frame
-        self.main_heading = Label(self.main_frame,
-                                  text="Fear Quiz",
-                                  font=("Arial", "24", "bold"))
-
-        self.main_heading.grid(row=0, pady=20)
-
-        # Add sub-heading question to frame
-        self.main_subheading = Label(self.main_frame,
-                                    text="How Many Questions?",
-                                    font=("Arial", "14", "bold"))
-    
-        self.main_subheading.grid(row=1)
-
-        # Add entry form to frame and a go button next to it
-        self.question_frame = Frame(self.main_frame)
-        self.question_frame.grid(row=2)
-
-        self.main_entry = Entry(self.question_frame,
-                                font=("Arial", "14"))
-
-        self.main_entry.grid(row=0, column=0, padx=10, pady=10)
-
-        self.go_button = Button(self.question_frame, text="Go",
-                                bg="#D5E8D4", font=button_font, width=5,
-                                command=lambda: self.check_questions())
-
-        self.go_button.grid(row=0, column=1)
-
-        # Add the output label (error message) below the entry form
-        self.output_label = Label(self.main_frame, text="")
-        self.output_label.grid(row=3)
-
-
-    # checks user input and if it's valid
-    def check_questions(self):
-        
-        # setup variables for future flexability
-        has_error = "no"
-        error = "Please enter a whole number between 1 and 50"
-
-        # get response and check that it is between max and min
-        response = self.main_entry.get()
-
-        try:
-            response = int(response)
-
-            if response > 0 and response < 51:
-                has_error = "no"
-
-            else:
-                has_error = "yes"
-
-        except ValueError:
-            has_error = "yes"
-
-        # prints error message if its an invalid input
-        if has_error == "yes":
-            self.output_label.config(text=error, fg="#9C0000")
-            self.main_entry.config(bg="#F8CECC")
-        
-        # if we have no errors
-        else:
-            self.to_quiz(response)
-
-
-    def to_quiz(self, num_questions):
-        Quiz(num_questions)
-
-        root.withdraw()
-
-
 class Quiz:
 
-    def __init__(self, how_many):
+    def __init__(self):
+
+        how_many = 3
 
         # Variables used to work out statistics, when game ends etc
         self.questions_wanted = IntVar()
@@ -102,16 +18,12 @@ class Quiz:
         self.questions_answered.set(0)
 
         self.question_fear_list = []
-
-        self.quiz_box = Toplevel()
-
-        self.quiz_box.protocol('WM_DELETE_WINDOW', partial(self.close_quiz))
         
         # common format for all buttons
         button_font = ("Arial", "10", "bold")
         
         # Set up text frame
-        self.text_frame = Frame(self.quiz_box, padx=10, pady=10)
+        self.text_frame = Frame(padx=10, pady=10)
         self.text_frame.grid()
 
         question_heading = "Question 1 of {}".format(how_many)
@@ -200,7 +112,7 @@ class Quiz:
 
         button_fear_list = self.get_fears()
 
-        self.fear_label.config(text=button_fear_list[0][0])
+        self.fear_label.config(text=button_fear_list[3][0])
 
         random.shuffle(button_fear_list)
 
@@ -210,15 +122,10 @@ class Quiz:
 
             count += 1
 
-    def close_quiz(self):
-
-        root.deiconify()
-        self.quiz_box.destroy()
-
 
 # main routine
 if __name__ == "__main__":
     root = Tk()
     root.title("Fear Quiz")
-    MainPage()
+    Quiz()
     root.mainloop()
