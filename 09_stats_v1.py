@@ -201,9 +201,8 @@ class Quiz:
         new_heading = "Question {} of {}".format(current_question, how_many)
         self.question_label.config(text=new_heading)
         
-        # disable the next button if on final question
-        if current_question == how_many:
-            self.next_button.config(state=DISABLED)
+        # disable next button until the question is answered
+        self.next_button.config(state=DISABLED)
 
         # get the fears for the question
         self.button_fear_list = self.get_fears()
@@ -236,6 +235,10 @@ class Quiz:
     # function to check the users answer
     def check_answer(self, user_answer):
         
+        # get current question and the total number of questions
+        how_many = self.questions_wanted.get()
+        current_question = self.questions_answered.get()
+
         # grab the correct fear
         correct_answer = self.correct_fear
 
@@ -255,11 +258,106 @@ class Quiz:
         # set the correct answer to green
         self.choice_buttons_ref[self.button_number].config(bg="#90EE90")
 
+        # enable next button
+        self.next_button.config(state=NORMAL)
 
+        # if on last round, upon button press, enable the next button
+        # change the text to end quiz and once pressed send user to end screen
+        if how_many == current_question:
+            self.next_button.config(text="End Quiz", command=lambda: self.to_end_screen())
+
+
+    # if "end quiz" is pressed send user to end screen
+    def to_end_screen(self):
+        
+        how_many = self.questions_wanted.get()
+
+        EndScreen(how_many, self.correct_answers, self.incorrect_answers)
+        self.quiz_box.destroy()
+
+
+    # if the "X" is pressed close the quiz box and re-open the main page
     def close_quiz(self):
 
         root.deiconify()
         self.quiz_box.destroy()
+
+
+class EndScreen:
+
+    def __init__(self, how_many, how_many_correct, how_many_incorrect):
+        
+        # create end screen frame
+        self.end_box = Toplevel()
+
+        correct_answers = how_many_correct
+        incorrect_answers = how_many_incorrect
+
+        self.text_frame = Frame(self.end_box, padx=100, pady=10)
+        self.text_frame.grid()
+        
+        # create labels, including the title and score
+        self.title_label = Label(self.text_frame, text="Fear Quiz", font=("Arial", "20", "bold"))
+        self.title_label.grid(row=0, columnspan=2, padx=10, pady=10)
+
+        self.blank_line_1 = Label(self.text_frame, text="")
+        self.blank_line_1.grid(row=1, columnspan=2, pady=10)
+
+        # format the score with correct answers and the number of questions answered
+        score_readout = "You Got\n\n{} Out of {}\n\nCorrect!".format(correct_answers, how_many)
+
+        self.score_text = Label(self.text_frame, text=score_readout, font=("Arial", "16", "bold"))
+        self.score_text.grid(row=2, columnspan=2, padx=5, pady=5)
+
+        self.blank_line_2 = Label(self.text_frame, text="")
+        self.blank_line_2.grid(row=3, columnspan=2, pady=10)
+
+        # create stats button, upon press, send user to stats screen
+        self.stats_button = Button(self.text_frame, text="Statistics", font=("Arial", "10", "bold"), width=12, height=2, bg="#80c5ff", command=lambda: self.to_stats(correct_answers, incorrect_answers))
+        self.stats_button.grid(row=4, column=0, padx=10, pady=10)
+        
+        # create a restart quiz button. upon press, sends user to the main page
+        self.restart_button = Button(self.text_frame, text="Restart Quiz", font=("Arial", "10", "bold"), width=12, height=2, bg="#D5E8D4", command=lambda: self.restart_quiz())
+        self.restart_button.grid(row=4, column=1, padx=10, pady=10)
+
+    
+    # send user to stats upon stats button press
+    def to_stats(self, correct_answers, incorrect_answers):
+        
+        self.stats_button.config(state=DISABLED)
+        DisplayStats(correct_answers, incorrect_answers)
+
+    
+    # sends user to mainpage upon restart button press
+    def restart_quiz(self):
+        
+        root.deiconify()
+        self.end_box.destroy()
+
+
+class DisplayStats:
+
+    def __init__(self, correct_answers, incorrect_answers):
+
+        self.stats_box = Toplevel()
+
+        print(correct_answers)
+        print(incorrect_answers)
+
+        self.stats_frame = Frame(self.stats_box, padx=100, pady=20)
+        self.stats_frame.grid()
+
+        self.stats_heading = Label(self.stats_frame, text="Statistics", font=("Arial", "20", "bold"))
+        self.stats_heading.grid(row=0, column=0, padx=10, pady=10)
+
+        self.table_frame = Frame(self.stats_frame, bg="#80c5ff", borderwidth=1, relief="solid", width=100, height=100)
+        self.table_frame.grid(row=1, column=0)
+
+        odd_rows = "#C9D6E8"
+        even_rows = "#80c5ff"
+
+        row_names = ["Correct", "Incorrect", "Percentage"]
+        row_formats = [even_rows, odd_rows, even_rows]
 
 
 # main routine

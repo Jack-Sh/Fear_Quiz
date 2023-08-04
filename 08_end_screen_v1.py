@@ -201,9 +201,8 @@ class Quiz:
         new_heading = "Question {} of {}".format(current_question, how_many)
         self.question_label.config(text=new_heading)
         
-        # disable the next button if on final question
-        if current_question == how_many:
-            self.next_button.config(state=DISABLED)
+        # disable next button until the question is answered
+        self.next_button.config(state=DISABLED)
 
         # get the fears for the question
         self.button_fear_list = self.get_fears()
@@ -236,6 +235,10 @@ class Quiz:
     # function to check the users answer
     def check_answer(self, user_answer):
         
+        # get current question and the total number of questions
+        how_many = self.questions_wanted.get()
+        current_question = self.questions_answered.get()
+
         # grab the correct fear
         correct_answer = self.correct_fear
 
@@ -255,11 +258,72 @@ class Quiz:
         # set the correct answer to green
         self.choice_buttons_ref[self.button_number].config(bg="#90EE90")
 
+        # enable next button
+        self.next_button.config(state=NORMAL)
 
+        # if on last round, upon button press, enable the next button
+        # change the text to end quiz and once pressed send user to end screen
+        if how_many == current_question:
+            self.next_button.config(text="End Quiz", command=lambda: self.to_end_screen())
+
+
+    # if "end quiz" is pressed send user to end screen
+    def to_end_screen(self):
+        
+        how_many = self.questions_wanted.get()
+
+        EndScreen(how_many, self.correct_answers)
+        self.quiz_box.destroy()
+
+
+    # if the "X" is pressed close the quiz box and re-open the main page
     def close_quiz(self):
 
         root.deiconify()
         self.quiz_box.destroy()
+
+
+class EndScreen:
+
+    def __init__(self, how_many, correct_answers):
+        
+        # create end screen frame
+        self.end_box = Toplevel()
+
+        self.text_frame = Frame(self.end_box, padx=100, pady=10)
+        self.text_frame.grid()
+        
+        # create labels, including the title and score
+        self.title_label = Label(self.text_frame, text="Fear Quiz", font=("Arial", "20", "bold"))
+        self.title_label.grid(row=0, column=0, padx=10, pady=10)
+
+        self.blank_line_1 = Label(self.text_frame, text="")
+        self.blank_line_1.grid(row=1, column=0, pady=10)
+
+        self.score_text_1 = Label(self.text_frame, text="You Got", font=("Arial", "14", "bold"))
+        self.score_text_1.grid(row=2, column=0, padx=5, pady=5)
+
+        # format the score based on how many questions the user got correct
+        final_score = "{} Out of {}".format(correct_answers, how_many)
+
+        self.score_text_2 = Label(self.text_frame, text=final_score, font=("Arial", "16", "bold"))
+        self.score_text_2.grid(row=3, column=0, padx=5, pady=5)
+        
+        self.score_text_3 = Label(self.text_frame, text="Correct!", font=("Arial", "14", "bold"))
+        self.score_text_3.grid(row=4, column=0, padx=5, pady=5)
+
+        self.blank_line_2 = Label(self.text_frame, text="")
+        self.blank_line_2.grid(row=5, column=0, pady=10)
+
+        # create a restart quiz button. upon press, sends user to the main page
+        self.restart_button = Button(self.text_frame, text="Restart Quiz", font=("Arial", "10", "bold"), width=12, height=2, bg="#D5E8D4", command=lambda: self.restart_quiz())
+        self.restart_button.grid(row=6, column=0, padx=10, pady=10)
+
+    
+    def restart_quiz(self):
+        
+        root.deiconify()
+        self.end_box.destroy()
 
 
 # main routine
