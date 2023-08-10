@@ -313,7 +313,7 @@ class EndScreen:
         self.blank_line_2.grid(row=3, columnspan=2, pady=10)
 
         # create stats button, upon press, send user to stats screen
-        self.stats_button = Button(self.text_frame, text="Statistics", font=("Arial", "10", "bold"), width=12, height=2, bg="#80c5ff", command=lambda: self.to_stats(correct_answers, incorrect_answers))
+        self.stats_button = Button(self.text_frame, text="Statistics", font=("Arial", "10", "bold"), width=12, height=2, bg="#80c5ff", command=lambda: self.to_stats(correct_answers, incorrect_answers, how_many))
         self.stats_button.grid(row=4, column=0, padx=10, pady=10)
         
         # create a restart quiz button. upon press, sends user to the main page
@@ -322,10 +322,10 @@ class EndScreen:
 
     
     # send user to stats upon stats button press
-    def to_stats(self, correct_answers, incorrect_answers):
+    def to_stats(self, correct_answers, incorrect_answers, how_many):
         
         self.stats_button.config(state=DISABLED)
-        DisplayStats(correct_answers, incorrect_answers)
+        DisplayStats(correct_answers, incorrect_answers, how_many)
 
     
     # sends user to mainpage upon restart button press
@@ -337,27 +337,64 @@ class EndScreen:
 
 class DisplayStats:
 
-    def __init__(self, correct_answers, incorrect_answers):
-
+    def __init__(self, correct_answers, incorrect_answers, how_many):
+        
+        # create GUI
         self.stats_box = Toplevel()
 
-        print(correct_answers)
-        print(incorrect_answers)
-
+        # create the main stats frame
         self.stats_frame = Frame(self.stats_box, padx=100, pady=20)
         self.stats_frame.grid()
 
+        # create 'statistics' heading
         self.stats_heading = Label(self.stats_frame, text="Statistics", font=("Arial", "20", "bold"))
         self.stats_heading.grid(row=0, column=0, padx=10, pady=10)
 
-        self.table_frame = Frame(self.stats_frame, bg="#80c5ff", borderwidth=1, relief="solid", width=100, height=100)
+        # create the frame for the table
+        self.table_frame = Frame(self.stats_frame, borderwidth=1, relief="solid")
         self.table_frame.grid(row=1, column=0)
+        
+        # do math for percentage correct and set to 1dp
+        percentage_decimal = correct_answers / how_many
+        percentage_correct = percentage_decimal * 100
+        percentage_correct = "{:.1f}".format(percentage_correct)
 
+        # set colours for rows in the table
         odd_rows = "#C9D6E8"
         even_rows = "#80c5ff"
 
+        # create list of items to go in the table
+        self.score_stats = (correct_answers, incorrect_answers, ("{}%").format(percentage_correct))
+
+        # format the row names and colours
         row_names = ["Correct", "Incorrect", "Percentage"]
         row_formats = [even_rows, odd_rows, even_rows]
+
+        # create an empty list, this will be filled with the table rows
+        all_labels = []
+
+        # fill the table with correct, incorrect and percentage
+        count = 0
+        for item in range(0, len(row_names)):
+            all_labels.append([row_names[item], row_formats[count]])
+            all_labels.append([self.score_stats[item], row_formats[count]])
+            count += 1
+
+        # create labels based on list above
+        for item in range(0, len(all_labels)):
+            self.data_label = Label(self.table_frame, text=all_labels[item][0], bg=all_labels[item][1], width="10", height="2", padx=5)
+
+            self.data_label.grid(row=item // 2, column=item % 2, padx=0, pady=0)
+
+        # create dismiss button
+        self.dismiss_button = Button(self.stats_frame, text="Dismiss", width=12, height=2, bg="#ffcccb", command=lambda: self.dismiss_window())
+
+        self.dismiss_button.grid(row=2, column=0, padx=10, pady=10)
+
+
+    def dismiss_window(self):
+        
+        self.stats_box.destroy()
 
 
 # main routine
