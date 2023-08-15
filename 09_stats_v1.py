@@ -313,7 +313,7 @@ class EndScreen:
         self.blank_line_2.grid(row=3, columnspan=2, pady=10)
 
         # create stats button, upon press, send user to stats screen
-        self.stats_button = Button(self.text_frame, text="Statistics", font=("Arial", "10", "bold"), width=12, height=2, bg="#80c5ff", command=lambda: self.to_stats(correct_answers, incorrect_answers, how_many))
+        self.stats_button = Button(self.text_frame, text="Statistics", font=("Arial", "10", "bold"), width=12, height=2, bg="#80c5ff", command=lambda: self.to_stats(correct_answers, incorrect_answers, how_many, self.stats_button))
         self.stats_button.grid(row=4, column=0, padx=10, pady=10)
         
         # create a restart quiz button. upon press, sends user to the main page
@@ -322,10 +322,10 @@ class EndScreen:
 
     
     # send user to stats upon stats button press
-    def to_stats(self, correct_answers, incorrect_answers, how_many):
+    def to_stats(self, correct_answers, incorrect_answers, how_many, stats_button):
         
         self.stats_button.config(state=DISABLED)
-        DisplayStats(correct_answers, incorrect_answers, how_many)
+        DisplayStats(correct_answers, incorrect_answers, how_many, stats_button)
 
     
     # sends user to mainpage upon restart button press
@@ -337,8 +337,11 @@ class EndScreen:
 
 class DisplayStats:
 
-    def __init__(self, correct_answers, incorrect_answers, how_many):
+    def __init__(self, correct_answers, incorrect_answers, how_many, stats_button):
         
+        # define stats button to use it later
+        self.stats_button = stats_button
+
         # create GUI
         self.stats_box = Toplevel()
 
@@ -350,9 +353,12 @@ class DisplayStats:
         self.stats_heading = Label(self.stats_frame, text="Statistics", font=("Arial", "20", "bold"))
         self.stats_heading.grid(row=0, column=0, padx=10, pady=10)
 
+        self.blank_line_1 = Label(self.stats_frame, text="")
+        self.blank_line_1.grid(row=1, pady=10)
+
         # create the frame for the table
         self.table_frame = Frame(self.stats_frame, borderwidth=1, relief="solid")
-        self.table_frame.grid(row=1, column=0)
+        self.table_frame.grid(row=2, column=0)
         
         # do math for percentage correct and set to 1dp
         percentage_decimal = correct_answers / how_many
@@ -386,14 +392,18 @@ class DisplayStats:
 
             self.data_label.grid(row=item // 2, column=item % 2, padx=0, pady=0)
 
-        # create dismiss button
+        self.blank_line_1 = Label(self.stats_frame, text="")
+        self.blank_line_1.grid(row=3, columnspan=2, pady=10)
+
+        # create dismiss button, upon press
         self.dismiss_button = Button(self.stats_frame, text="Dismiss", width=12, height=2, bg="#ffcccb", command=lambda: self.dismiss_window())
 
-        self.dismiss_button.grid(row=2, column=0, padx=10, pady=10)
+        self.dismiss_button.grid(row=4, column=0, padx=10, pady=10)
 
-
+    
     def dismiss_window(self):
         
+        self.stats_button.config(state=NORMAL)
         self.stats_box.destroy()
 
 
