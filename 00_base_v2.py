@@ -143,7 +143,7 @@ class Quiz:
 
         self.fear_label.grid(row=2, column=0, padx=10, pady=10, sticky=N)
 
-        self.prompt_label = Label(self.text_frame, text="is a fear of:", font=("Arial", "18", "bold"))
+        self.prompt_label = Label(self.text_frame, text="is the fear of:", font=("Arial", "18", "bold"))
         self.prompt_label.grid(row=3, column=0, pady=10)
 
         # create quiz frame (buttons)
